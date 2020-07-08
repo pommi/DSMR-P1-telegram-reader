@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # Python script to retrieve and parse a DSMR telegram from a P1 port
 
 import re
@@ -11,7 +11,7 @@ import datetime
 production = True   # Use serial or file as input
 debugging = 1   # Show extra output
 # DSMR interesting codes
-gas_meter = '1' 
+gas_meter = '1'
 list_of_interesting_codes = {
     '1-0:1.8.1': 'Meter Reading electricity delivered to client (Tariff 1) in kWh',
     '1-0:1.8.2': 'Meter Reading electricity delivered to client (Tariff 2) in kWh',
@@ -42,8 +42,8 @@ list_of_interesting_codes = {
     '0-'+gas_meter+':24.2.1': 'Last hourly value (temperature converted), gas delivered to client in m3'
 }
 
-max_len = max(map(len,list_of_interesting_codes.values()))
-    
+max_len = max(list(map(len,list(list_of_interesting_codes.values()))))
+
 # Program variables
 # Set the way the values are printed:
 print_format = 'string'
@@ -85,7 +85,7 @@ while True:
             except Exception as ex:
                 template = "An exception of type {0} occured. Arguments:\n{1!r}"
                 message = template.format(type(ex).__name__, ex.args)
-                print message
+                print(message)
                 sys.exit("Fout bij het openen van %s. Programma afgebroken." % ser.name)
         else:
             telegram = ''
@@ -94,7 +94,7 @@ while True:
             # Read in a line
             telegram_line = ser.readline()
             if debugging == 2:
-                print(telegram_line.decode('ascii').strip())
+                print((telegram_line.decode('ascii').strip()))
             # Check if it matches the checksum line (! at start)
             if re.match(b'(?=!)', telegram_line):
                 telegram = telegram + telegram_line
@@ -107,8 +107,8 @@ while True:
     except Exception as ex:
         template = "An exception of type {0} occured. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
-        print message
-        print("There was a problem %s, continuing...") % ex
+        print(message)
+        print(("There was a problem %s, continuing...") % ex)
     #Close serial port
     if production:
         try:
@@ -143,7 +143,7 @@ while True:
                 if debugging == 2:
                     print(telegram_line)
                 if debugging == 3:
-                    print re.split(b'(\()', telegram_line)
+                    print(re.split(b'(\()', telegram_line))
                 # You can't put a list in a dict TODO better solution
                 code = ''.join(re.split(b'(\()', telegram_line)[:1])
                 value = ''.join(re.split(b'(\()', telegram_line)[1:])
@@ -163,10 +163,11 @@ while True:
                 if print_format == 'string' :
                     print_string = '{0:<'+str(max_len)+'}{1:>12}'
                     if debugging > 0:
-                            print(datetime.datetime.utcnow()),
-                    print(print_string.format(list_of_interesting_codes[code], value))
+                            print((datetime.datetime.utcnow()), end=' ')
+                    print((print_string.format(list_of_interesting_codes[code], value)))
                 else:
                     print_string = '{0:<10}{1:>12}'
                     if debugging > 0:
-                            print(datetime.datetime.utcnow()),
-                    print(print_string.format(code, value))
+                            print((datetime.datetime.utcnow()), end=' ')
+                    print((print_string.format(code, value)))
+
