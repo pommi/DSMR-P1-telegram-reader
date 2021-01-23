@@ -45,8 +45,6 @@ list_of_interesting_codes = {
 max_len = max(list(map(len,list(list_of_interesting_codes.values()))))
 
 # Program variables
-# Set the way the values are printed:
-print_format = 'string'
 # The true telegram ends with an exclamation mark after a CR/LF
 pattern = re.compile(b'\r\n(?=!)')
 # According to the DSMR spec, we need to check a CRC16
@@ -161,14 +159,7 @@ while True:
                 else:
                         value = float(value.lstrip(b'\(').rstrip(b'\)*kWhA'))
                 # Print nicely formatted string
-                if print_format == 'string' :
-                    print_string = '{0:<'+str(max_len)+'}{1:>12}'
-                    if debugging > 0:
-                            print((datetime.datetime.utcnow()), end=' ')
-                    print((print_string.format(list_of_interesting_codes[code], value)))
-                else:
-                    print_string = '{0:<10}{1:>12}'
-                    if debugging > 0:
-                            print((datetime.datetime.utcnow()), end=' ')
-                    print((print_string.format(code, value)))
-
+                print_string = '{0:<'+str(max_len)+'}{1:>12}'
+		if debugging > 0:
+			print(datetime.datetime.utcnow()), 
+                print(print_string.format(list_of_interesting_codes[code], value))
