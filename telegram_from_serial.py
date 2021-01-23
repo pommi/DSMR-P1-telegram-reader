@@ -80,7 +80,7 @@ while True:
             #Open serial port
             try:
                 ser.open()
-                telegram = ''
+                telegram = b''
                 checksum_found = False
             except Exception as ex:
                 template = "An exception of type {0} occured. Arguments:\n{1!r}"
@@ -88,13 +88,13 @@ while True:
                 print(message)
                 sys.exit("Fout bij het openen van %s. Programma afgebroken." % ser.name)
         else:
-            telegram = ''
+            telegram = b''
             checksum_found = False
         while not checksum_found:
             # Read in a line
             telegram_line = ser.readline()
             if debugging == 2:
-                print((telegram_line.decode('ascii').strip()))
+                print(telegram_line.decode('ascii').strip())
             # Check if it matches the checksum line (! at start)
             if re.match(b'(?=!)', telegram_line):
                 telegram = telegram + telegram_line
@@ -145,16 +145,17 @@ while True:
                 if debugging == 3:
                     print(re.split(b'(\()', telegram_line))
                 # You can't put a list in a dict TODO better solution
-                code = ''.join(re.split(b'(\()', telegram_line)[:1])
-                value = ''.join(re.split(b'(\()', telegram_line)[1:])
+                code = b''.join(re.split(b'(\()', telegram_line)[:1])
+                value = b''.join(re.split(b'(\()', telegram_line)[1:])
                 telegram_values[code] = value
 
         # Print the lines to screen
         for code, value in sorted(telegram_values.items()):
+            code = code.decode('ascii')
             if code in list_of_interesting_codes:
                 # Cleanup value
                 # Gas needs another way to cleanup
-                if 'm3' in value:
+                if 'm3' in value.decode('ascii'):
                         (time,value) = re.findall('\((.*?)\)',value)
                         value = float(value.lstrip(b'\(').rstrip(b'\)*m3'))
                 else:
